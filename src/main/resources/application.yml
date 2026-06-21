@@ -1,0 +1,10 @@
+server:
+  port: 8081
+
+ratelimiter:
+  capacity: 5        # max burst size (tokens in bucket)
+  refill-rate: 1.0    # tokens added per second
+
+# Try changing these and re-testing with the curl loop in README.md
+# to see how behavior changes — that's the fastest way to build
+# real intuition for the algorithm.
