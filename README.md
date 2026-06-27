@@ -4,6 +4,33 @@ A pluggable, production-style API rate limiter built in Java/Spring Boot.
 Supports **token-bucket** and **sliding-window** strategies, with **in-memory**
 or **Redis-backed** storage for single-instance and distributed deployments.
 
+## High-Level Architecture
+
+```mermaid
+flowchart LR
+
+Client -->|HTTP Request| Spring[Spring Boot API]
+
+Spring --> Interceptor[RateLimitInterceptor]
+
+Interceptor --> Strategy{Rate Limiting Strategy}
+
+Strategy --> TB[Token Bucket]
+Strategy --> SW[Sliding Window]
+
+TB --> Storage
+SW --> Storage
+
+Storage --> Memory[In-Memory Store]
+Storage --> Redis[(Redis)]
+
+Interceptor -->|Allowed| Controller[REST Controller]
+
+Interceptor -->|Rejected| TooMany[HTTP 429]
+
+Controller --> Response[HTTP Response]
+```
+
 ## Run it
 
 ```bash
