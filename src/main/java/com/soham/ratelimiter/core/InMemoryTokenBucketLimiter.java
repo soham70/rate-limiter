@@ -5,13 +5,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * In-memory, single-instance implementation of RateLimiterStrategy.
  * Keeps one TokenBucket per key (e.g. per IP address or API key).
- *
- * LIMITATION (call this out explicitly in interviews/README):
- * this only works correctly for a single application instance. If you run
- * 3 replicas behind a load balancer, each replica has its own map, so a
- * client could get 3x the intended limit. That's exactly the problem
- * DAY 3 (Redis-backed bucket) solves — Redis becomes the single shared
- * source of truth for token counts across all instances.
  */
 public class InMemoryTokenBucketLimiter implements RateLimiterStrategy {
 
@@ -25,9 +18,13 @@ public class InMemoryTokenBucketLimiter implements RateLimiterStrategy {
     }
 
     @Override
-    public boolean tryConsume(String key) {
+    public RateLimitResult tryConsume(String key) {
         TokenBucket bucket = buckets.computeIfAbsent(key,
                 k -> new TokenBucket(capacity, refillRatePerSecond));
-        return bucket.tryConsume();
+        if (bucket.tryConsume()) {
+            return RateLimitResult.permit();
+        }
+        long retryAfter = (long) Math.ceil(1.0 / refillRatePerSecond);
+        return RateLimitResult.deny(retryAfter);
     }
 }

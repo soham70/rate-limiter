@@ -1,10 +1,16 @@
 server:
   port: 8081
 
-ratelimiter:
-  capacity: 5        # max burst size (tokens in bucket)
-  refill-rate: 1.0    # tokens added per second
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
-# Try changing these and re-testing with the curl loop in README.md
-# to see how behavior changes — that's the fastest way to build
-# real intuition for the algorithm.
+ratelimiter:
+  strategy: token-bucket       # token-bucket | sliding-window
+  backend: in-memory           # in-memory | redis
+  capacity: 5                  # token-bucket: max burst size
+  refill-rate: 1.0             # token-bucket: tokens added per second
+  window-seconds: 10           # sliding-window: window size
+  max-requests: 5              # sliding-window: max requests per window

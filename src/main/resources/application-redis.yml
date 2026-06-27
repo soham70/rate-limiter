@@ -1,0 +1,16 @@
+server:
+  port: 8081
+
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+ratelimiter:
+  strategy: token-bucket
+  backend: redis
+  capacity: 5
+  refill-rate: 1.0
+  window-seconds: 10
+  max-requests: 5

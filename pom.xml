@@ -27,13 +27,10 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Uncomment in Day 3 when you add the distributed Redis-backed bucket -->
-        <!--
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-        -->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

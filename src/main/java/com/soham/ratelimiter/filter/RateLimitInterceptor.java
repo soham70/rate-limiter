@@ -1,20 +1,15 @@
 package com.soham.ratelimiter.filter;
 
 import com.soham.ratelimiter.core.RateLimiterStrategy;
+import com.soham.ratelimiter.core.RateLimitResult;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
- * DAY 2 — Wires the core algorithm into the HTTP request lifecycle.
+ * Wires the rate limiter into the HTTP request lifecycle.
  *
- * Keying strategy: rate-limits by API key header if present, otherwise
- * falls back to client IP. This mirrors how real APIs behave (authenticated
- * clients get their own bucket; anonymous/public traffic is limited by IP).
- *
- * TODO (Day 2 stretch): add a `Retry-After` header to 429 responses,
- * computed from the bucket's refill rate, so clients know exactly how
- * long to back off.
+ * Keying: rate-limits by X-API-Key header if present, otherwise client IP.
  */
 public class RateLimitInterceptor implements HandlerInterceptor {
 
@@ -29,19 +24,22 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String key = resolveKey(request);
+        RateLimitResult result = rateLimiter.tryConsume(key);
 
-        if (rateLimiter.tryConsume(key)) {
+        if (result.permitted()) {
             return true;
         }
 
-        response.setStatus(429); // HTTP 429 Too Many Requests
+        response.setStatus(429);
         response.setContentType("application/json");
+        response.setHeader("Retry-After", String.valueOf(result.retryAfterSeconds()));
         try {
             response.getWriter().write(
-                    "{\"error\":\"rate_limit_exceeded\",\"message\":\"Too many requests. Please slow down.\"}"
+                    "{\"error\":\"rate_limit_exceeded\",\"message\":\"Too many requests. Please slow down.\"," +
+                            "\"retryAfterSeconds\":" + result.retryAfterSeconds() + "}"
             );
         } catch (Exception ignored) {
-            // response stream already committed/closed — nothing more we can do
+            // response stream already committed/closed
         }
         return false;
     }

@@ -1,7 +1,5 @@
 package com.soham.ratelimiter.core;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * DAY 1 — Core token-bucket algorithm.
  *
