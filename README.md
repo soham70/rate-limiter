@@ -4,13 +4,6 @@ A pluggable, production-style API rate limiter built in Java/Spring Boot.
 Supports **token-bucket** and **sliding-window** strategies, with **in-memory**
 or **Redis-backed** storage for single-instance and distributed deployments.
 
-## Status
-
-- [x] **Day 1** — Core token-bucket algorithm (`TokenBucket.java`), plain Java, unit tested.
-- [x] **Day 2** — Wired into Spring Boot as an HTTP interceptor, applied per-IP / per-API-key.
-- [x] **Day 3** — Distributed Redis token bucket with atomic Lua script.
-- [x] **Day 4** — Sliding-window strategy (in-memory + Redis ZSET), configurable via `application.yml`.
-
 ## Run it
 
 ```bash
@@ -98,12 +91,3 @@ src/main/java/com/soham/ratelimiter/
     WebConfig.java
   controller/
     DemoController.java
-docs/
-  INTERVIEW_PROJECT_GUIDE.md
-  INTERVIEW_QUESTIONS.md
-```
-
-## Interview prep
-
-See `docs/INTERVIEW_PROJECT_GUIDE.md` for how to explain this project in interviews,
-and `docs/INTERVIEW_QUESTIONS.md` for practice questions from basic to advanced.
