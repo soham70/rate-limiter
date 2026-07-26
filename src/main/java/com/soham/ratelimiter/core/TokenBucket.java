@@ -15,9 +15,6 @@ package com.soham.ratelimiter.core;
  *  - Token bucket smooths this out and naturally supports controlled bursts
  *    up to `capacity`, which is usually what APIs actually want.
  *
- * Thread-safety: this implementation is lock-free, using compare-and-swap
- * via AtomicLong, so it's safe to share one bucket across multiple threads
- * for the same client/key without external synchronization.
  */
 public class TokenBucket {
 
