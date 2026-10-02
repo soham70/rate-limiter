@@ -44,12 +44,6 @@ Test it (capacity=5, refill-rate=1.0/sec by default — see `application.yml`):
 1..8 | ForEach-Object { (Invoke-WebRequest -Uri http://localhost:8081/api/ping -UseBasicParsing).StatusCode }
 ```
 
-Run tests:
-
-```bash
-mvn test
-```
-
 Build:
 
 ```bash
